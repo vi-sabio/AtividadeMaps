@@ -1,0 +1,113 @@
+1- Criar projeto ionic com comando no cmd : "ionic start AtividadeMaps" e escolher framework Angular e Template Blank;
+
+--------------------------------------------------------------------------------
+2- Adicionar Capacitor GoogleMaps: "npm install @capacitor/google-maps";
+
+------------------------------------------------------------------------------
+3- Adicionar Capacitor GeoLocation: "npm install @capacitor/geolocation";
+
+------------------------------------------------------------------------
+4- Atualizar Capacitor: "npx cap sync", se nao funcionar "ionic cap sync";
+
+---------------------------------------------------------------
+5- Adicionar Schema CUSTOM_ELEMENTS_SCHEMA e Importa-lo no home.module.ts :
+
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+@NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+
+---------------------------------------------------------------------------
+6- Colocar componente no home.html : " <capacitor-google-map #map"></capacitor-google-map> "
+
+---------------------------------------------------------------------------
+7- Adicionar style no home.page.scss :
+
+  capacitor-google-map {
+    display: inline-block;
+    width: 275px;
+    height: 400px;
+  }
+
+------------------------------------------------------------------------
+8- Adicionar Chave no environments/environments.ts :
+
+export const environment = {
+  production: false,
+  mapsKey: 'AIzaSyD6v5fULYIQf3DgoRdHRxCahyUMBJSYyjc'
+};
+
+----------------------------------------------------------------------
+9- Importar Enviroment,GoogleMap,GeoLocation,Position,ElementRef e ViewChild no  home.page.ts :
+
+import { environment } from 'src/environments/environment';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { GoogleMap } from '@capacitor/google-maps';
+import { Geolocation, Position } from '@capacitor/geolocation';
+
+--------------------------------------------------------------
+10- Criar variavel Do Mapa e Referencia do Html no home.page.ts :
+
+@ViewChild('map') mapRef!: ElementRef<HTMLElement>;
+map!: GoogleMap;
+
+-----------------------------------------------------------------
+11- Criar Metodo createMap no home.page.ts :
+
+async createMap() {
+    this.map = await GoogleMap.create({
+      id: 'my-map',
+      element: this.mapRef.nativeElement,
+      apiKey: environment.mapsKey,
+      config: {
+        center: {
+          lat: -22.4962832,
+          lng: -48.560531,
+        },
+        zoom: 11,
+      },
+    });
+    this.buscarPosicao();
+}
+
+---------------------------------------------------------------
+12- Criar Metodo buscarPosicao usando o Capacitor GeoLocation no home.page.ts :
+
+async buscarPosicao(){
+
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.focarMapa(coordinates);
+    console.log('Current position:', coordinates);
+
+}
+
+-------------------------------------------------------------------------
+13- Criar Metodo focarMapa no home.page.ts :
+
+focarMapa(coordinates: Position){
+  this.map.setCamera({
+    coordinate:{
+      lat: coordinates.coords.latitude,
+      lng: coordinates.coords.longitude,
+    },
+    zoom: 15,
+    animate: true,
+  });
+  this.adicionarMarcador(coordinates);
+}
+
+-------------------------------------------------------------------------
+13- Criar Metodo adicionarMarcador no home.page.ts :
+
+async adicionarMarcador(coordinates: Position){
+  const markerId = await this.map.addMarker({
+    coordinate:{
+      lat: coordinates.coords.latitude,
+      lng: coordinates.coords.longitude,
+    },
+  });
+}
+
+-------------------------------------------------------------
+14- Executar o projeto e comece a rezar: "ionic serve -o"
