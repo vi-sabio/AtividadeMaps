@@ -98,7 +98,7 @@ focarMapa(coordinates: Position){
 }
 
 -------------------------------------------------------------------------
-13- Criar Metodo adicionarMarcador no home.page.ts :
+14- Criar Metodo adicionarMarcador no home.page.ts :
 
 async adicionarMarcador(coordinates: Position){
   const markerId = await this.map.addMarker({
@@ -110,4 +110,4 @@ async adicionarMarcador(coordinates: Position){
 }
 
 -------------------------------------------------------------
-14- Executar o projeto e comece a rezar: "ionic serve -o"
+15- Executar o projeto e comece a rezar: "ionic serve -o"
